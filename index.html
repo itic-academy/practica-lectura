@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Práctica de Lectura Oral — ITIC Academy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;0,900;1,300&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --surface2: #f0ede5;
+  --border: #e0dbd0;
+  --ink: #1c1814;
+  --ink2: #5a5248;
+  --ink3: #9a9088;
+  --purple: #5c2d91;
+  --purple-light: #7c4ab5;
+  --purple-dim: rgba(92,45,145,0.08);
+  --purple-border: rgba(92,45,145,0.2);
+  --red: #c0392b;
+  --red-dim: rgba(192,57,43,0.08);
+  --amber: #d4820a;
+  --amber-dim: rgba(212,130,10,0.1);
+  --green: #1e8a4a;
+  --green-dim: rgba(30,138,74,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+/* Subtle paper texture */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+
+.app { position: relative; z-index: 1; }
+
+/* ===== HEADER ===== */
+header {
+  background: var(--purple);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 60px;
+  box-shadow: 0 2px 12px rgba(92,45,145,0.25);
+}
+
+.header-logo {
+  height: 34px;
+  border-radius: 5px;
+  background: white;
+  padding: 2px 5px;
+  object-fit: contain;
+}
+.header-logo-fb {
+  height: 34px; width: 40px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 5px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: white;
+}
+
+.header-title {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  flex: 1;
+}
+
+.header-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.12);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ===== MAIN LAYOUT ===== */
+.main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .main { grid-template-columns: 1fr; }
+  header { padding: 0 16px; }
+}
+
+/* ===== LEFT COLUMN ===== */
+
+/* Mic hero */
+.mic-hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px 32px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mic-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, var(--purple-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.mic-ring {
+  position: relative;
+  width: 100px; height: 100px;
+  margin: 0 auto 20px;
+}
+
+.mic-ring-outer {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  transition: all 0.3s;
+}
+
+.mic-ring-inner {
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mic-ring-inner:hover { background: var(--purple-dim); border-color: var(--purple); }
+
+.mic-ring.recording .mic-ring-outer {
+  border-color: var(--red);
+  animation: ring-pulse 1.4s ease-in-out infinite;
+}
+.mic-ring.recording .mic-ring-inner {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+@keyframes ring-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(192,57,43,0.3); }
+  50% { transform: scale(1.06); opacity: 0.8; box-shadow: 0 0 0 12px rgba(192,57,43,0); }
+}
+
+.mic-label {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.mic-sublabel {
+  font-size: 13px;
+  color: var(--ink3);
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+
+/* Timer display */
+.timer-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 48px;
+  font-weight: 500;
+  color: var(--purple);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.timer-display.warning { color: var(--amber); }
+.timer-display.danger { color: var(--red); }
+
+.timer-label {
+  font-size: 11px;
+  color: var(--ink3);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mic-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.btn-purple { background: var(--purple); color: white; }
+.btn-purple:hover { background: var(--purple-light); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--ink2); }
+.btn-ghost:hover { border-color: var(--purple); color: var(--purple); }
+.btn-red { background: var(--red-dim); border: 1px solid rgba(192,57,43,0.25); color: var(--red); }
+.btn-red:hover { background: rgba(192,57,43,0.15); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 500px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.stat-card.highlight { border-color: var(--purple); background: var(--purple-dim); }
+.stat-card.warn { border-color: var(--amber); background: var(--amber-dim); }
+.stat-card.danger { border-color: var(--red); background: var(--red-dim); }
+.stat-card.good { border-color: var(--green); background: var(--green-dim); }
+
+.stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+.stat-card.warn .stat-num { color: var(--amber); }
+.stat-card.danger .stat-num { color: var(--red); }
+.stat-card.good .stat-num { color: var(--green); }
+
+.stat-label { font-size: 10px; color: var(--ink3); letter-spacing: 0.04em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+
+/* Velocity bar */
+.velocity-bar-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.velocity-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.velocity-title { font-size: 12px; font-weight: 600; color: var(--ink2); }
+.velocity-hint { font-size: 11px; color: var(--ink3); font-family: 'JetBrains Mono', monospace; }
+
+.velocity-track {
+  height: 10px;
+  background: var(--surface2);
+  border-radius: 5px;
+  position: relative;
+  overflow: visible;
+  margin-bottom: 6px;
+}
+
+.velocity-zones {
+  display: flex;
+  height: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.vz { height: 100%; }
+.vz-slow { flex: 1; background: rgba(212,130,10,0.3); }
+.vz-ok { flex: 1.5; background: rgba(30,138,74,0.3); }
+.vz-fast { flex: 1; background: rgba(192,57,43,0.3); }
+
+.velocity-needle {
+  position: absolute;
+  top: -4px;
+  width: 4px; height: 18px;
+  background: var(--purple);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  transition: left 0.5s ease;
+  left: 50%;
+}
+.velocity-needle::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 50%;
+  transform: translateX(-50%);
+  width: 10px; height: 10px;
+  background: var(--purple);
+  border-radius: 50%;
+}
+
+.velocity-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--ink3);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Transcript */
+.transcript-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.transcript-header {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface2);
+}
+.transcript-title { font-size: 11px; font-weight: 600; color: var(--ink2); letter-spacing: 0.06em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+.transcript-body {
+  padding: 16px 18px;
+  min-height: 120px;
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.85;
+  font-weight: 300;
+  color: var(--ink2);
+}
+.interim { color: var(--ink3); }
+.t-placeholder { color: var(--ink3); font-style: italic; }
+
+/* ===== RIGHT COLUMN ===== */
+.right-col { display: flex; flex-direction: column; gap: 16px; }
+
+/* Muletillas */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.panel-header {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.panel-body { padding: 16px; }
+
+.muletilla-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.muletilla-row:last-child { border-bottom: none; }
+.muletilla-word { color: var(--ink); font-style: italic; }
+.muletilla-bar-wrap { flex: 1; margin: 0 12px; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+.muletilla-bar { height: 100%; background: var(--red); border-radius: 2px; transition: width 0.4s ease; min-width: 4px; }
+.muletilla-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--red);
+  min-width: 24px;
+  text-align: right;
+}
+.no-muletillas { font-size: 13px; color: var(--green); font-weight: 400; display: flex; align-items: center; gap: 6px; }
+
+/* Pausas timeline */
+.pausas-list { display: flex; flex-direction: column; gap: 6px; }
+.pausa-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+.pausa-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--ink3);
+  width: 38px;
+  flex-shrink: 0;
+}
+.pausa-bar-wrap { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.pausa-bar { height: 100%; border-radius: 3px; background: var(--amber); }
+.pausa-dur { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--amber); width: 32px; text-align: right; }
+.no-pausas { font-size: 13px; color: var(--green); display: flex; align-items: center; gap: 6px; }
+
+/* Resumen final */
+.resumen-final {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+  display: none;
+}
+.resumen-final.show { display: block; }
+.resumen-title {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+
+.resumen-items { display: flex; flex-direction: column; gap: 10px; }
+.resumen-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.resumen-item.ok { background: var(--green-dim); border: 1px solid rgba(30,138,74,0.2); }
+.resumen-item.warn { background: var(--amber-dim); border: 1px solid rgba(212,130,10,0.2); }
+.resumen-item.bad { background: var(--red-dim); border: 1px solid rgba(192,57,43,0.2); }
+.resumen-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.resumen-text { color: var(--ink2); }
+.resumen-text strong { color: var(--ink); }
+
+/* Tip bar */
+.tip-bar {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple-border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--purple);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.tip-icon { flex-shrink: 0; font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <img class="header-logo" src="https://itic-academy.github.io/simulador-tic/logo.jpeg" alt="ITIC"
+       onerror="this.style.display='none';document.getElementById('hLogoFb').style.display='flex'">
+  <div class="header-logo-fb" id="hLogoFb">IT</div>
+  <div class="header-title">Práctica de Lectura Oral · A1 TIC</div>
+  <div class="header-badge">Sin IA · 100% privado</div>
+</header>
+
+<div class="main">
+
+  <!-- LEFT -->
+  <div class="left-col">
+
+    <div class="tip-bar">
+      <span class="tip-icon">💡</span>
+      <span>Lee tu supuesto en voz alta como si estuvieras ante el tribunal. El ritmo óptimo es <strong>120–160 palabras/min</strong>. Usa Chrome para el reconocimiento de voz.</span>
+    </div>
+
+    <!-- Mic hero -->
+    <div class="mic-hero">
+      <div class="mic-ring" id="micRing">
+        <div class="mic-ring-outer"></div>
+        <div class="mic-ring-inner" onclick="toggleMic()" id="micInner">🎙️</div>
+      </div>
+      <div class="mic-label" id="micLabel">Pulsa para empezar</div>
+      <div class="mic-sublabel" id="micSublabel">Lee tu supuesto en voz alta y analiza tu presentación</div>
+
+      <div class="timer-display" id="timerDisplay">00:00</div>
+      <div class="timer-label">Tiempo de lectura</div>
+
+      <div class="mic-controls">
+        <button class="btn btn-ghost" onclick="resetAll()" id="btnReset">↺ Reiniciar</button>
+        <button class="btn btn-ghost" onclick="finalizarYresumen()" id="btnFinalizar" disabled>Ver resumen ✓</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card" id="cardWPM">
+        <div class="stat-num" id="statWPM">0</div>
+        <div class="stat-label">palabras/min</div>
+      </div>
+      <div class="stat-card" id="cardPalabras">
+        <div class="stat-num" id="statPalabras">0</div>
+        <div class="stat-label">palabras</div>
+      </div>
+      <div class="stat-card" id="cardPausas">
+        <div class="stat-num" id="statPausas">0</div>
+        <div class="stat-label">pausas &gt;3s</div>
+      </div>
+      <div class="stat-card" id="cardMuletillas">
+        <div class="stat-num" id="statMuletillas">0</div>
+        <div class="stat-label">muletillas</div>
+      </div>
+    </div>
+
+    <!-- Velocity bar -->
+    <div class="velocity-bar-wrap">
+      <div class="velocity-label">
+        <div class="velocity-title">Velocidad de lectura</div>
+        <div class="velocity-hint" id="velocityHint">—</div>
+      </div>
+      <div class="velocity-track">
+        <div class="velocity-zones">
+          <div class="vz vz-slow"></div>
+          <div class="vz vz-ok"></div>
+          <div class="vz vz-fast"></div>
+        </div>
+        <div class="velocity-needle" id="velocityNeedle"></div>
+      </div>
+      <div class="velocity-scale">
+        <span>0</span><span>80</span><span>120</span><span>160</span><span>200</span><span>240+</span>
+      </div>
+    </div>
+
+    <!-- Transcript -->
+    <div class="transcript-wrap">
+      <div class="transcript-header">
+        <span class="transcript-title">Transcripción en tiempo real</span>
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px" onclick="clearTranscript()">Limpiar</button>
+      </div>
+      <div class="transcript-body" id="transcriptBody">
+        <span class="t-placeholder">Tu lectura aparecerá aquí mientras hablas…</span>
+      </div>
+    </div>
+
+    <!-- Resumen final -->
+    <div class="resumen-final" id="resumenFinal">
+      <div class="resumen-title">📊 Análisis de tu lectura</div>
+      <div class="resumen-items" id="resumenItems"></div>
+    </div>
+
+  </div><!-- /left -->
+
+  <!-- RIGHT -->
+  <div class="right-col">
+
+    <!-- Muletillas -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>Muletillas detectadas</span>
+        <span id="muletillasTotal" style="color:var(--red)">0</span>
+      </div>
+      <div class="panel-body" id="muletillasBody">
+        <div class="no-muletillas">✓ Ninguna detectada aún</div>
+      </div>
+    </div>
+
+    <!-- Pausas -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>Pausas largas (&gt;3 seg)</span>
+        <span id="pausasTotal" style="color:var(--amber)">0</span>
+      </div>
+      <div class="panel-body" id="pausasBody">
+        <div class="no-pausas">✓ Sin pausas largas</div>
+      </div>
+    </div>
+
+    <!-- Consejos ritmo -->
+    <div class="panel">
+      <div class="panel-header"><span>Guía de ritmo</span></div>
+      <div class="panel-body">
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--ink2)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:10px;height:10px;border-radius:50%;background:rgba(212,130,10,0.5);flex-shrink:0"></div>
+            <span><strong>Lento</strong> &lt;120 ppm — El tribunal puede desconectar</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:10px;height:10px;border-radius:50%;background:rgba(30,138,74,0.6);flex-shrink:0"></div>
+            <span><strong>Óptimo</strong> 120–160 ppm — Claro y profesional</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:10px;height:10px;border-radius:50%;background:rgba(192,57,43,0.5);flex-shrink:0"></div>
+            <span><strong>Rápido</strong> &gt;160 ppm — Difícil de seguir</span>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px;color:var(--ink3)">
+            💡 Para 20 min de lectura a ritmo óptimo: <strong style="color:var(--purple)">2.400–3.200 palabras</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /right -->
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ====== STATE ======
+const S = {
+  recognition: null,
+  isRecording: false,
+  transcriptFinal: '',
+  startTime: null,
+  timerInterval: null,
+  elapsed: 0,          // seconds
+  wordCount: 0,
+  pausas: [],          // [{time, duration}]
+  lastWordTime: null,
+  pauseStartTime: null,
+  inPause: false,
+  muletillas: {},
+  wpm: 0,
+};
+
+const MULETILLAS = [
+  'eh','eeh','eeeh','mmm','um','umm','bueno','entonces','pues',
+  'o sea','es decir','básicamente','literalmente','evidentemente',
+  'efectivamente','verdad','claro','perfecto','bien'
+];
+
+// ====== TIMER ======
+function startTimer() {
+  S.startTime = Date.now() - S.elapsed * 1000;
+  S.timerInterval = setInterval(() => {
+    S.elapsed = Math.floor((Date.now() - S.startTime) / 1000);
+    updateTimerDisplay();
+    updateWPM();
+  }, 500);
+}
+
+function stopTimer() {
+  clearInterval(S.timerInterval);
+  S.timerInterval = null;
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(S.elapsed / 60);
+  const s = S.elapsed % 60;
+  const el = document.getElementById('timerDisplay');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className = 'timer-display';
+  if (S.elapsed > 1800) el.classList.add('danger');
+  else if (S.elapsed > 1500) el.classList.add('warning');
+}
+
+// ====== SPEECH RECOGNITION ======
+function initRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    alert('Tu navegador no soporta reconocimiento de voz.\nUsa Google Chrome para esta funcionalidad.');
+    return false;
+  }
+  S.recognition = new SR();
+  S.recognition.lang = 'es-ES';
+  S.recognition.continuous = true;
+  S.recognition.interimResults = true;
+  S.recognition.maxAlternatives = 1;
+
+  S.recognition.onresult = handleResult;
+  S.recognition.onerror = (e) => { if (e.error === 'not-allowed') alert('Permiso de micrófono denegado.'); };
+  S.recognition.onend = () => { if (S.isRecording) { try { S.recognition.start(); } catch(e){} } };
+  return true;
+}
+
+function handleResult(event) {
+  let interim = '';
+  for (let i = event.resultIndex; i < event.results.length; i++) {
+    const t = event.results[i][0].transcript;
+    if (event.results[i].isFinal) {
+      S.transcriptFinal += t + ' ';
+      countWords(t);
+      detectMuletillas(t);
+      trackPause(true);
+    } else {
+      interim = t;
+      trackPause(false);
+    }
+  }
+  renderTranscript(S.transcriptFinal, interim);
+}
+
+function countWords(text) {
+  const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+  S.wordCount += words.length;
+  document.getElementById('statPalabras').textContent = S.wordCount;
+  updateWPM();
+}
+
+function updateWPM() {
+  const mins = S.elapsed / 60;
+  S.wpm = mins > 0.1 ? Math.round(S.wordCount / mins) : 0;
+  document.getElementById('statWPM').textContent = S.wpm;
+  updateVelocityIndicator(S.wpm);
+  updateStatColors();
+}
+
+function updateVelocityIndicator(wpm) {
+  // Map wpm 0-240 to 0-100% of bar
+  const pct = Math.min(100, (wpm / 240) * 100);
+  document.getElementById('velocityNeedle').style.left = pct + '%';
+
+  let hint = '', color = '';
+  if (wpm === 0) { hint = 'Sin datos aún'; color = 'var(--ink3)'; }
+  else if (wpm < 80) { hint = 'Muy lento — acelera un poco'; color = 'var(--amber)'; }
+  else if (wpm < 120) { hint = 'Algo lento — puedes subir el ritmo'; color = 'var(--amber)'; }
+  else if (wpm <= 160) { hint = '✓ Ritmo óptimo'; color = 'var(--green)'; }
+  else if (wpm <= 200) { hint = 'Algo rápido — respira y baja un poco'; color = 'var(--amber)'; }
+  else { hint = 'Demasiado rápido — el tribunal no puede seguirte'; color = 'var(--red)'; }
+
+  const el = document.getElementById('velocityHint');
+  el.textContent = `${wpm} ppm · ${hint}`;
+  el.style.color = color;
+}
+
+function updateStatColors() {
+  const wCard = document.getElementById('cardWPM');
+  wCard.className = 'stat-card';
+  if (S.wpm > 0 && S.wpm >= 120 && S.wpm <= 160) wCard.classList.add('good');
+  else if (S.wpm > 0 && (S.wpm < 100 || S.wpm > 180)) wCard.classList.add('danger');
+  else if (S.wpm > 0) wCard.classList.add('warn');
+
+  const pCard = document.getElementById('cardMuletillas');
+  const total = Object.values(S.muletillas).reduce((a,b)=>a+b,0);
+  pCard.className = 'stat-card';
+  if (total === 0) pCard.classList.add('good');
+  else if (total <= 3) pCard.classList.add('warn');
+  else pCard.classList.add('danger');
+
+  const pausCard = document.getElementById('cardPausas');
+  pausCard.className = 'stat-card';
+  if (S.pausas.length === 0) pausCard.classList.add('good');
+  else if (S.pausas.length <= 3) pausCard.classList.add('warn');
+  else pausCard.classList.add('danger');
+}
+
+function trackPause(wordReceived) {
+  const now = Date.now();
+  if (wordReceived) {
+    if (S.inPause && S.pauseStartTime) {
+      const dur = (now - S.pauseStartTime) / 1000;
+      if (dur >= 3) {
+        const timeInReading = S.elapsed;
+        S.pausas.push({ time: timeInReading, duration: dur.toFixed(1) });
+        document.getElementById('statPausas').textContent = S.pausas.length;
+        renderPausas();
+      }
+    }
+    S.inPause = false;
+    S.pauseStartTime = null;
+    S.lastWordTime = now;
+  } else {
+    if (!S.inPause && S.lastWordTime && (now - S.lastWordTime) > 3000) {
+      S.inPause = true;
+      S.pauseStartTime = S.lastWordTime + 3000;
+    }
+  }
+}
+
+function detectMuletillas(text) {
+  const lc = ' ' + text.toLowerCase() + ' ';
+  MULETILLAS.forEach(m => {
+    const re = new RegExp('\\s' + m.replace(/\s/g,'\\s') + '[\\s,\\.!?]', 'gi');
+    const matches = lc.match(re);
+    if (matches) {
+      S.muletillas[m] = (S.muletillas[m] || 0) + matches.length;
+    }
+  });
+  renderMuletillas();
+  const total = Object.values(S.muletillas).reduce((a,b)=>a+b,0);
+  document.getElementById('statMuletillas').textContent = total;
+  document.getElementById('muletillasTotal').textContent = total;
+  updateStatColors();
+}
+
+// ====== RENDER ======
+function renderTranscript(final, interim) {
+  const body = document.getElementById('transcriptBody');
+  body.innerHTML = `<span>${final}</span><span class="interim">${interim}</span>`;
+  body.scrollTop = body.scrollHeight;
+}
+
+function renderMuletillas() {
+  const body = document.getElementById('muletillasBody');
+  const entries = Object.entries(S.muletillas).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+  if (!entries.length) {
+    body.innerHTML = '<div class="no-muletillas">✓ Ninguna detectada aún</div>';
+    return;
+  }
+  const max = Math.max(...entries.map(([,v]) => v));
+  body.innerHTML = entries.map(([word, count]) => `
+    <div class="muletilla-row">
+      <span class="muletilla-word">"${word}"</span>
+      <div class="muletilla-bar-wrap"><div class="muletilla-bar" style="width:${(count/max)*100}%"></div></div>
+      <span class="muletilla-count">×${count}</span>
+    </div>
+  `).join('');
+}
+
+function renderPausas() {
+  const body = document.getElementById('pausasBody');
+  document.getElementById('pausasTotal').textContent = S.pausas.length;
+  if (!S.pausas.length) {
+    body.innerHTML = '<div class="no-pausas">✓ Sin pausas largas</div>';
+    return;
+  }
+  const maxDur = Math.max(...S.pausas.map(p => parseFloat(p.duration)));
+  body.innerHTML = '<div class="pausas-list">' + S.pausas.slice(-8).map(p => {
+    const m = Math.floor(p.time / 60);
+    const s = p.time % 60;
+    const timeStr = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const pct = Math.min(100, (parseFloat(p.duration) / Math.max(maxDur, 10)) * 100);
+    return `<div class="pausa-item">
+      <span class="pausa-time">${timeStr}</span>
+      <div class="pausa-bar-wrap"><div class="pausa-bar" style="width:${pct}%"></div></div>
+      <span class="pausa-dur">${p.duration}s</span>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+// ====== CONTROLS ======
+function toggleMic() {
+  if (!S.recognition && !initRecognition()) return;
+  if (S.isRecording) {
+    S.isRecording = false;
+    S.recognition.stop();
+    stopTimer();
+    document.getElementById('micRing').classList.remove('recording');
+    document.getElementById('micInner').textContent = '▶️';
+    document.getElementById('micLabel').textContent = 'Pausado';
+    document.getElementById('micSublabel').textContent = 'Pulsa para continuar';
+    document.getElementById('btnFinalizar').disabled = false;
+  } else {
+    S.isRecording = true;
+    S.recognition.start();
+    startTimer();
+    document.getElementById('micRing').classList.add('recording');
+    document.getElementById('micInner').textContent = '⏸️';
+    document.getElementById('micLabel').textContent = 'Grabando…';
+    document.getElementById('micSublabel').textContent = 'Habla con claridad · Pulsa para pausar';
+    document.getElementById('btnFinalizar').disabled = false;
+    document.getElementById('resumenFinal').classList.remove('show');
+  }
+}
+
+function clearTranscript() {
+  document.getElementById('transcriptBody').innerHTML = '<span class="t-placeholder">Tu lectura aparecerá aquí mientras hablas…</span>';
+}
+
+function resetAll() {
+  if (S.isRecording) {
+    S.isRecording = false;
+    S.recognition?.stop();
+  }
+  stopTimer();
+  S.transcriptFinal = '';
+  S.startTime = null;
+  S.elapsed = 0;
+  S.wordCount = 0;
+  S.pausas = [];
+  S.lastWordTime = null;
+  S.pauseStartTime = null;
+  S.inPause = false;
+  S.muletillas = {};
+  S.wpm = 0;
+
+  document.getElementById('micRing').classList.remove('recording');
+  document.getElementById('micInner').textContent = '🎙️';
+  document.getElementById('micLabel').textContent = 'Pulsa para empezar';
+  document.getElementById('micSublabel').textContent = 'Lee tu supuesto en voz alta y analiza tu presentación';
+  document.getElementById('timerDisplay').textContent = '00:00';
+  document.getElementById('timerDisplay').className = 'timer-display';
+  document.getElementById('statWPM').textContent = '0';
+  document.getElementById('statPalabras').textContent = '0';
+  document.getElementById('statPausas').textContent = '0';
+  document.getElementById('statMuletillas').textContent = '0';
+  document.getElementById('muletillasTotal').textContent = '0';
+  document.getElementById('pausasTotal').textContent = '0';
+  document.getElementById('velocityHint').textContent = '—';
+  document.getElementById('velocityHint').style.color = '';
+  document.getElementById('velocityNeedle').style.left = '50%';
+  document.getElementById('btnFinalizar').disabled = true;
+  clearTranscript();
+  document.getElementById('muletillasBody').innerHTML = '<div class="no-muletillas">✓ Ninguna detectada aún</div>';
+  document.getElementById('pausasBody').innerHTML = '<div class="no-pausas">✓ Sin pausas largas</div>';
+  document.getElementById('resumenFinal').classList.remove('show');
+  ['cardWPM','cardPalabras','cardPausas','cardMuletillas'].forEach(id => {
+    document.getElementById(id).className = 'stat-card';
+  });
+}
+
+function finalizarYresumen() {
+  if (S.isRecording) toggleMic();
+  const items = [];
+  const wpm = S.wpm;
+  const total = Object.values(S.muletillas).reduce((a,b)=>a+b,0);
+  const topMuletilla = Object.entries(S.muletillas).sort((a,b)=>b[1]-a[1])[0];
+
+  // Velocidad
+  if (wpm === 0) {
+    items.push({ type: 'warn', icon: '⚠️', text: 'No se detectó lectura. Asegúrate de usar Chrome y hablar cerca del micrófono.' });
+  } else if (wpm >= 120 && wpm <= 160) {
+    items.push({ type: 'ok', icon: '✅', text: `<strong>Ritmo excelente: ${wpm} palabras/min.</strong> Estás en el rango óptimo para una presentación formal ante tribunal.` });
+  } else if (wpm < 120) {
+    items.push({ type: 'warn', icon: '⚠️', text: `<strong>Ritmo lento: ${wpm} palabras/min.</strong> Intenta subir ligeramente la velocidad. El tribunal puede perder atención. Objetivo: 120–160 ppm.` });
+  } else {
+    items.push({ type: 'bad', icon: '❌', text: `<strong>Ritmo demasiado rápido: ${wpm} palabras/min.</strong> El tribunal tendrá dificultades para seguirte. Respira más y baja el ritmo a 120–160 ppm.` });
+  }
+
+  // Pausas
+  if (S.pausas.length === 0) {
+    items.push({ type: 'ok', icon: '✅', text: 'Sin pausas largas detectadas. Buena fluidez en la lectura.' });
+  } else if (S.pausas.length <= 2) {
+    items.push({ type: 'warn', icon: '⚠️', text: `<strong>${S.pausas.length} pausa${S.pausas.length>1?'s':''} larga${S.pausas.length>1?'s':''} detectada${S.pausas.length>1?'s':''}.</strong> Puede indicar nerviosismo o pérdida de hilo. Practica la transición entre párrafos.` });
+  } else {
+    items.push({ type: 'bad', icon: '❌', text: `<strong>${S.pausas.length} pausas largas.</strong> Demasiadas interrupciones. Marca físicamente las transiciones en tu documento antes de leer.` });
+  }
+
+  // Muletillas
+  if (total === 0) {
+    items.push({ type: 'ok', icon: '✅', text: 'Sin muletillas detectadas. Expresión muy limpia y profesional.' });
+  } else if (total <= 3) {
+    items.push({ type: 'warn', icon: '⚠️', text: `<strong>${total} muletilla${total>1?'s':''} detectada${total>1?'s':''}.</strong> Leve. Presta atención a "${topMuletilla?.[0]}" especialmente.` });
+  } else {
+    items.push({ type: 'bad', icon: '❌', text: `<strong>${total} muletillas detectadas.</strong> La más frecuente: "${topMuletilla?.[0]}" (×${topMuletilla?.[1]}). Grábate leyendo y escúchate para tomar conciencia.` });
+  }
+
+  // Volumen de texto
+  if (S.wordCount > 0) {
+    const mins = S.elapsed / 60;
+    const proyeccion20 = Math.round(S.wpm * 20);
+    items.push({ type: 'ok', icon: '📊', text: `<strong>${S.wordCount} palabras en ${Math.round(mins)} minutos.</strong> A este ritmo, en 20 min leerías ~${proyeccion20} palabras. El supuesto A1 suele tener 2.500–4.000 palabras.` });
+  }
+
+  const resumen = document.getElementById('resumenFinal');
+  document.getElementById('resumenItems').innerHTML = items.map(item =>
+    `<div class="resumen-item ${item.type}">
+      <span class="resumen-icon">${item.icon}</span>
+      <span class="resumen-text">${item.text}</span>
+    </div>`
+  ).join('');
+  resumen.classList.add('show');
+  resumen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
